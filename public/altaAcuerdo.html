@@ -34,9 +34,9 @@
     <label for="publ_boletin" class="col-sm-2 control-label">Publicación del Boletín</label>
     <div class="col-sm-9">
         <p class="input-group">
-          <input type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="fecha_publ" is-open="popup2.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+          <input type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="publ_boletin" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
           <span class="input-group-btn">
-            <button type="button" class="btn btn-default" ng-click="open2()"><i class="glyphicon glyphicon-calendar"></i></button>
+            <button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
           </span>
         </p>
     </div>
@@ -62,7 +62,7 @@
       </div>
   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
-      <button type="submit" class="btn btn-default">Sign in</button>
+      <button class="btn btn-default" ng-click="saveAcuerdo()">Guardar</button>
     </div>
   </div>
   {{surte_efectos}}
