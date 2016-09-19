@@ -33,6 +33,14 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap'])
                     alert("No se encontró el elemento:" + err);
                 });
         }
+        this.createAcuerdo = function(jsonData){
+            return $http.post('/acuerdos', jsonData).
+              then(function(response){
+                return response;
+              }, function(err){
+                  alert("No se pudo realizar la petición POST" + err)
+              })
+        }
     })
     .controller("homeController", function($scope) {
         $scope.cat = "Holi hooe";
@@ -41,16 +49,30 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap'])
         $scope.acuerdos = acuerdos.data;
       })
 
-      .controller("altaAcuerdoController", function($scope){
+      .controller("altaAcuerdoController", function($scope, ServiceAcuerdos){
         $scope.tipos_not = ["Listado", "Presencial"];
-        $scope.tipo_not = "";
 
-        $scope.publ_boletin ;
-        $scope.surte_efectos;
+        $scope.acuerdo = {
+          tipo_not : "",
+          publ_boletin : "",
+          surte_efectos: ""
+        }
+
+        $scope.popup1 = {
+          opened: false
+        }
+
+        $scope.popup1 = function(){
+          $scope.popup1.opened = true;
+        }
 
         $scope.popup2 = {
           opened: false
         };
+
+        $scope.open1 = function(){
+          $scope.popup1.opened = true;
+        }
 
         $scope.open2 = function() {
           $scope.popup2.opened = true;
@@ -69,5 +91,14 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap'])
           var date = data.date,
           mode = data.mode;
           return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+        }
+
+        $scope.saveAcuerdo = function (){
+          ServiceAcuerdos.createAcuerdo($scope.acuerdo)
+          .then(function(doc){
+            console.log(doc);
+          }, function(response){
+            alert(response);
+          })
         }
       });
