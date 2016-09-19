@@ -45,6 +45,9 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap'])
         $scope.tipos_not = ["Listado", "Presencial"];
         $scope.tipo_not = "";
 
+        $scope.publ_boletin ;
+        $scope.surte_efectos;
+
         $scope.popup2 = {
           opened: false
         };
