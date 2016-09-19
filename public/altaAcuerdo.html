@@ -1,0 +1,58 @@
+<div class="container">
+<form name="acuerdosForm" class="form-horizontal">
+  <div class="form-group">
+    <label for="actor" class="col-sm-2 control-label">Actor</label>
+    <div class="col-sm-10">
+      <input type="email" class="form-control" id="actor" placeholder="Actor">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="expediente" class="col-sm-2 control-label">Demandado</label>
+    <div class="col-sm-10">
+      <input type="password" class="form-control" id="Demandado" placeholder="Demandado">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="juzgado" class="col-sm-2 control-label">Juzgado</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="juzgado" placeholder="Juzgado">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="expediente" class="col-sm-2 control-label">Expediente</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="expediente" placeholder="Expediente">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="juicio" class="col-sm-2 control-label">Juicio</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="juicio" placeholder="Juicio">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="publ_boletin" class="col-sm-2 control-label">Publicación del Boletín</label>
+    <div class="col-sm-9">
+        <p class="input-group">
+          <input type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="dt" is-open="popup2.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="open2()"><i class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+        </p>
+    </div>
+    </div>
+    <div class="form-group">
+      <label for="juicio" class="col-sm-2 control-label">Tipo de Notificación</label>
+      <div class="col-sm-10">
+        <select class="form-control" id="tipo_not" ng-model="tipo_not">
+        <option ng-repeat="tipo_not in tipos_not" value="{{tipo_not}}">{{tipo_not}}</option>
+      </select>
+      </div>
+    </div>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-default">Sign in</button>
+    </div>
+  </div>
+</form>
+</div>
