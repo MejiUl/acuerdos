@@ -9,9 +9,9 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap'])
                 templateUrl: "acuerdos.html",
                 controller: "acuerdosController",
                 resolve: {
-                  acuerdos: function(ServiceAcuerdos){
-                    return ServiceAcuerdos.getAcuerdos();
-                  }
+                    acuerdos: function(ServiceAcuerdos) {
+                        return ServiceAcuerdos.getAcuerdos();
+                    }
                 }
 
             })
@@ -27,90 +27,96 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap'])
     .service("ServiceAcuerdos", function($http) {
         this.getAcuerdos = function() {
             return $http.get("/acuerdos").
-                then(function(response) {
-                    return response;
-                }, function(err) {
-                    alert("No se encontró el elemento:" + err);
-                });
-        }
-        this.createAcuerdo = function(jsonData){
-            console.log("Inside Service"+jsonData)
-            return $http.post('/acuerdos', jsonData).
-              then(function(response){
+            then(function(response) {
                 return response;
-              }, function(err){
-                  alert("No se pudo realizar la petición POST" + err)
-              })
+            }, function(err) {
+                alert("No se encontró el elemento:" + err);
+            });
+        }
+        this.createAcuerdo = function(jsonData) {
+            console.log("Inside Service" + jsonData)
+            return $http.post('/acuerdos', jsonData).
+            then(function(response) {
+                return response;
+            }, function(err) {
+                alert("No se pudo realizar la petición POST" + err)
+            })
         }
     })
     .controller("homeController", function($scope) {
         $scope.cat = "Holi hooe";
     })
-    .controller("acuerdosController", function(acuerdos, $scope){
+    .controller("acuerdosController", function(acuerdos, $scope) {
         $scope.acuerdos = acuerdos.data;
-      })
+    })
 
-      .controller("altaAcuerdoController", function($scope, ServiceAcuerdos){
-        $scope.tipos_not = ["Listado", "Presencial"];
+.controller("altaAcuerdoController", function($scope, ServiceAcuerdos) {
+    $scope.tipos_not = ["Listado", "Presencial"];
 
-        // JSON document
-        $scope.acuerdo = {
-          slug : "",
-          actor : "",
-          demandado : "",
-          juzgado : "",
-          expediente: "",
-          juicio: "",
-          publ_boletin : "",
-          tipo_not : "",
-          surte_efectos: "",
-          terminos : {},
-          creado_por : 'francisco@abogados.com',
-          fecha_creacion : ''
-        }
+    // JSON document
+    $scope.acuerdo = {
+        slug: "",
+        actor: "",
+        demandado: "",
+        juzgado: "",
+        expediente: "",
+        juicio: "",
+        publ_boletin: "",
+        tipo_not: "",
+        surte_efectos: "",
+        terminos: [],
+        creado_por: 'francisco@abogados.com',
+        fecha_creacion: ''
+    }
 
-        $scope.popup1 = {
-          opened: false
-        }
+    $scope.addMore = function() {
+        $scope.acuerdo.terminos.push({
+            textBox: ""
+        });
+    }
 
-        $scope.popup1 = function(){
-          $scope.popup1.opened = true;
-        }
+    $scope.popup1 = {
+        opened: false
+    }
 
-        $scope.popup2 = {
-          opened: false
-        };
+    $scope.popup1 = function() {
+        $scope.popup1.opened = true;
+    }
 
-        $scope.open1 = function(){
-          $scope.popup1.opened = true;
-        }
+    $scope.popup2 = {
+        opened: false
+    };
 
-        $scope.open2 = function() {
-          $scope.popup2.opened = true;
-        };
+    $scope.open1 = function() {
+        $scope.popup1.opened = true;
+    }
 
-        // Calendar Options
-        $scope.dateOptions = {
+    $scope.open2 = function() {
+        $scope.popup2.opened = true;
+    };
+
+    // Calendar Options
+    $scope.dateOptions = {
         dateDisabled: disabled,
         formatYear: 'yy',
         maxDate: new Date(2020, 5, 22),
         minDate: new Date(),
         startingDay: 1
-        };
+    };
 
-        function disabled(data) {
-          var date = data.date,
-          mode = data.mode;
-          return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
-        }
+    function disabled(data) {
+        var date = data.date,
+            mode = data.mode;
+        return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+    }
 
-        // POST Function to create an Acuerdo
-        $scope.saveAcuerdo = function (acuerdo){
-          ServiceAcuerdos.createAcuerdo(acuerdo)
-          .then(function(doc){
-            console.log(doc);
-          }, function(response){
-            alert(response);
-          })
-        }
-      });
+    // POST Function to create an Acuerdo
+    $scope.saveAcuerdo = function(acuerdo) {
+        ServiceAcuerdos.createAcuerdo(acuerdo)
+            .then(function(doc) {
+                console.log(doc);
+            }, function(response) {
+                alert(response);
+            })
+    }
+});
