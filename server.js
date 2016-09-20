@@ -18,7 +18,7 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, database){
 })
 
 app.use(bodyParser.urlencoded({extended: true}))
-
+app.use(bodyParser.json());
 
 // Send HTML file
 app.get('/', function(req,res){
