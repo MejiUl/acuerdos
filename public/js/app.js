@@ -34,6 +34,7 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap'])
                 });
         }
         this.createAcuerdo = function(jsonData){
+            console.log("Inside Service"+jsonData)
             return $http.post('/acuerdos', jsonData).
               then(function(response){
                 return response;
@@ -52,10 +53,20 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap'])
       .controller("altaAcuerdoController", function($scope, ServiceAcuerdos){
         $scope.tipos_not = ["Listado", "Presencial"];
 
+        // JSON document
         $scope.acuerdo = {
-          tipo_not : "",
+          slug : "",
+          actor : "",
+          demandado : "",
+          juzgado : "",
+          expediente: "",
+          juicio: "",
           publ_boletin : "",
-          surte_efectos: ""
+          tipo_not : "",
+          surte_efectos: "",
+          terminos : {},
+          creado_por : 'francisco@abogados.com',
+          fecha_creacion : ''
         }
 
         $scope.popup1 = {
@@ -93,8 +104,9 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap'])
           return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
         }
 
-        $scope.saveAcuerdo = function (){
-          ServiceAcuerdos.createAcuerdo($scope.acuerdo)
+        // POST Function to create an Acuerdo
+        $scope.saveAcuerdo = function (acuerdo){
+          ServiceAcuerdos.createAcuerdo(acuerdo)
           .then(function(doc){
             console.log(doc);
           }, function(response){
