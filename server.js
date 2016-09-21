@@ -28,7 +28,7 @@ app.get('/', function(req, res) {
 })
 
 // Get the list of all acuerdos
-app.get('/acuerdos', function(req, res) {
+app.get('/apiv1/acuerdos', function(req, res) {
     db.collection('acuerdos').find().toArray(function(err, results) {
         if (err) {
             handleError(res, "HOLI", "Must provide Things", 400);
@@ -39,14 +39,28 @@ app.get('/acuerdos', function(req, res) {
     })
 })
 
+// Get a single acuerdo
+app.get('/apiv1/acuerdos/:id', function(req, res) {
+    db.collection('acuerdos').find({
+        slug: req.params.id
+    }).toArray(function(err, results) {
+        if (err) {
+            handleError(res, "Holi", "Mus", 400);
+        } else {
+            console.log("GET /acuerdos/" + req.params.id);
+            res.status(200).json(results);
+        }
+    })
+})
+
 // Dar de alta un acuerdo
-app.post('/acuerdos', function(req, res) {
+app.post('/apiv1/acuerdos', function(req, res) {
     var acuerdo = req.body;
 
     db.collection('acuerdos').save(acuerdo, function(err, result) {
         if (err) return console.log(err)
-        console.log('saved to database')
-        res.redirect('/')
+        console.log('POST /acuerdos')
+        res.status(201).json(result.ops[0]);
     })
 })
 
