@@ -26,7 +26,7 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap'])
     })
     .service("ServiceAcuerdos", function($http) {
         this.getAcuerdos = function() {
-            return $http.get("/acuerdos").
+            return $http.get("/apiv1/acuerdos").
             then(function(response) {
                 return response;
             }, function(err) {
@@ -35,7 +35,7 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap'])
         }
         this.createAcuerdo = function(jsonData) {
             console.log("Inside Service" + jsonData)
-            return $http.post('/acuerdos', jsonData).
+            return $http.post('/apiv1/acuerdos', jsonData).
             then(function(response) {
                 return response;
             }, function(err) {
@@ -50,7 +50,7 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap'])
         $scope.acuerdos = acuerdos.data;
     })
 
-.controller("altaAcuerdoController", function($scope, ServiceAcuerdos) {
+.controller("altaAcuerdoController", function($scope, ServiceAcuerdos, uibDateParser, $filter, $window) {
     $scope.tipos_not = ["Listado", "Presencial"];
 
     // JSON document
@@ -66,9 +66,10 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap'])
         surte_efectos: "",
         terminos: [],
         creado_por: 'francisco@abogados.com',
-        fecha_creacion: ''
+        fecha_creacion: new Date()
     }
 
+    // Add more textBox to the Acuerdos JSON
     $scope.addMore = function() {
         $scope.acuerdo.terminos.push({
             textBox: ""
@@ -111,10 +112,12 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap'])
     }
 
     // POST Function to create an Acuerdo
-    $scope.saveAcuerdo = function(acuerdo) {
-        ServiceAcuerdos.createAcuerdo(acuerdo)
+    $scope.saveAcuerdo = function() {
+        $scope.acuerdo.slug = $scope.acuerdo.expediente + '-' + $filter('date')($scope.acuerdo.publ_boletin, 'ddMMyyyy');
+        ServiceAcuerdos.createAcuerdo($scope.acuerdo)
             .then(function(doc) {
-                console.log(doc);
+                console.log("Succesfull POST operation: " + doc);
+                $window.location.href = '/#/acuerdos'
             }, function(response) {
                 alert(response);
             })
