@@ -33,20 +33,13 @@
         <div class="form-group">
             <label for="publ_boletin" class="col-sm-2 control-label">Publicación del Boletín</label>
             <div class="col-sm-9">
-                <p class="input-group">
-                    <input type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="acuerdo.publ_boletin" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close"/>
-                    <span class="input-group-btn">
-                        <button type="button" class="btn btn-default" ng-click="open1()">
-                            <i class="glyphicon glyphicon-calendar"></i>
-                        </button>
-                    </span>
-                </p>
+                <input type="date" class="form-control" ng-model="acuerdo.publ_boletin" required/>
             </div>
         </div>
         <div class="form-group">
             <label for="juicio" class="col-sm-2 control-label">Tipo de Notificación</label>
             <div class="col-sm-10">
-                <select class="form-control" id="tipo_not" ng-model="acuerdo.tipo_not">
+                <select class="form-control" ng-model="acuerdo.tipo_not">
                     <option ng-repeat="tipo_not in tipos_not" value="{{tipo_not}}">{{tipo_not}}</option>
                 </select>
             </div>
@@ -54,31 +47,23 @@
         <div class="form-group">
             <label for="surte_efectos" class="col-sm-2 control-label">Surte Efectos</label>
             <div class="col-sm-9">
-                <p class="input-group">
-                    <input type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" ng-model="acuerdo.surte_efectos" is-open="popup2.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close"/>
-                    <span class="input-group-btn">
-                        <button type="button" class="btn btn-default" ng-click="open2()">
-                            <i class="glyphicon glyphicon-calendar"></i>
-                        </button>
-                    </span>
-                </p>
+                <input type="date" class="form-control" ng-model="acuerdo.surte_efectos" required/>
             </div>
         </div>
 
         <div class="form-group">
             <label for="terminos" class="col-sm-2 control-label">Términos</label>
-            <div class="col-sm-9" ng-repeat="textArea in acuerdo.terminos">
-                <textarea class="form-control" maxlength="225" rows="2" ng-model="textArea.textBox" placeholder="textbox"></textarea>
+            <div class="col-sm-9" ng-repeat="termino in acuerdo.terminos">
+                <textarea class="form-control" maxlength="225" rows="2" ng-model="termino.textBox" placeholder="Acuerdos"></textarea>
+                <input type="date" class="form-control" ng-model="termino.fecha_termino" required/>
             </div>
             <button class="btn btn-info" ng-click="addMore()">Add More</button>
         </div>
 
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
-                <button class="btn btn-default" ng-click="saveAcuerdo(acuerdo)">Guardar</button>
+                <button class="btn btn-default" ng-click="saveAcuerdo()">Guardar</button>
             </div>
         </div>
-        {{surte_efectos}}
-        {{publ_boletin}}
     </form>
 </div>
