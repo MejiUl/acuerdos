@@ -6,7 +6,7 @@
   </div>
 </div>
 <div class="container">
-  <table st-table="rowCollection" class="table table-striped">
+  <table st-table="acuerdos" class="table table-striped">
   	<thead>
   	<tr>
       <th>ID</th>
@@ -17,20 +17,21 @@
   		<th>Juicio</th>
       <th>Publicación del Boletín</th>
       <th>Surte Efectos</th>
-            <th>Tipo de Notificación</th>
+      <th>Tipo de Notificación</th>
   	</tr>
   	</thead>
   	<tbody>
-  	<tr ng-repeat="acuerdo in acuerdos">
+  	<tr st-select-row="row" st-select-mode="single" ng-repeat="acuerdo in acuerdos">
   		<td>{{acuerdo.slug}}</td>
   		<td>{{acuerdo.actor}}</td>
   		<td>{{acuerdo.demandado}}</td>
   		<td>{{acuerdo.juzgado}}</td>
   		<td>{{acuerdo.expediente}}</td>
       <td>{{acuerdo.juicio}}</td>
-      <td>{{acuerdo.publ_boletin}}</td>
-      <td>{{acuerdo.surte_efectos}}</td>
+      <td>{{acuerdo.publ_boletin | date : "dd/MM/yyyy"}}</td>
+      <td>{{acuerdo.surte_efectos | date : "dd/MM/yyyy"}}</td>
       <td>{{acuerdo.tipo_not}}</td>
+      <td><a href="/#/acuerdos/{{acuerdo.slug}}"><span class="glyphicon glyphicon-eye-open"></span></a></td>
   	</tr>
   	</tbody>
   </table>
