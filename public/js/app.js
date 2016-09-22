@@ -15,6 +15,15 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap'])
                 }
 
             })
+            .when("/acuerdos/:id", {
+                templateUrl: "editAcuerdo.html",
+                controller: "editAcuerdoController",
+                resolve: {
+                    acuerdo: function($route, ServiceAcuerdos) { // use $route instead $routeProvider
+                        return ServiceAcuerdos.getAcuerdo($route.current.params.id);
+                    }
+                }
+            })
             .when("/acuerdos/nuevo", {
                 templateUrl: "altaAcuerdo.html",
                 controller: "altaAcuerdoController",
@@ -25,14 +34,25 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap'])
             })
     })
     .service("ServiceAcuerdos", function($http) {
+        // GET ALL acuerdos
         this.getAcuerdos = function() {
-            return $http.get("/apiv1/acuerdos").
-            then(function(response) {
-                return response;
-            }, function(err) {
-                alert("No se encontró el elemento:" + err);
-            });
-        }
+                return $http.get("/apiv1/acuerdos").
+                then(function(response) {
+                    return response;
+                }, function(err) {
+                    alert("No se encontró el elemento:" + err);
+                });
+            }
+            // GET a single acuerdo
+        this.getAcuerdo = function(id) {
+                return $http.get("/apiv1/acuerdos/" + id).
+                then(function(response) {
+                    return response;
+                }, function(err) {
+                    alert("No se encontró el elemento: " + id);
+                })
+            }
+            // POST Acuerdo
         this.createAcuerdo = function(jsonData) {
             console.log("Inside Service" + jsonData)
             return $http.post('/apiv1/acuerdos', jsonData).
@@ -48,6 +68,9 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap'])
     })
     .controller("acuerdosController", function(acuerdos, $scope) {
         $scope.acuerdos = acuerdos.data;
+    })
+    .controller("editAcuerdoController", function($scope, $routeParams, acuerdo) {
+        $scope.acuerdo = acuerdo.data;
     })
 
 .controller("altaAcuerdoController", function($scope, ServiceAcuerdos, uibDateParser, $filter, $window) {
