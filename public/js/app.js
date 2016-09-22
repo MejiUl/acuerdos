@@ -1,4 +1,4 @@
-angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap'])
+angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap', 'ngFileUpload'])
     .config(function($routeProvider) {
         $routeProvider
             .when("/", {
@@ -15,6 +15,10 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap'])
                 }
 
             })
+            .when("/acuerdos/nuevo", {
+                templateUrl: "altaAcuerdo.html",
+                controller: "altaAcuerdoController"
+            })
             .when("/acuerdos/:id", {
                 templateUrl: "editAcuerdo.html",
                 controller: "editAcuerdoController",
@@ -23,11 +27,6 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap'])
                         return ServiceAcuerdos.getAcuerdo($route.current.params.id);
                     }
                 }
-            })
-            .when("/acuerdos/nuevo", {
-                templateUrl: "altaAcuerdo.html",
-                controller: "altaAcuerdoController",
-
             })
             .otherwise({
                 redirectTo: "/"
@@ -72,77 +71,97 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap'])
     .controller("editAcuerdoController", function($scope, $routeParams, acuerdo) {
         $scope.acuerdo = acuerdo.data;
     })
+    .controller("altaAcuerdoController", function($scope, ServiceAcuerdos, uibDateParser, $filter, $window, Upload) {
+        $scope.tipos_not = ["Listado", "Presencial"];
 
-.controller("altaAcuerdoController", function($scope, ServiceAcuerdos, uibDateParser, $filter, $window) {
-    $scope.tipos_not = ["Listado", "Presencial"];
+        // JSON document
+        $scope.acuerdo = {
+            slug: "",
+            actor: "",
+            demandado: "",
+            juzgado: "",
+            expediente: "",
+            juicio: "",
+            publ_boletin: "",
+            tipo_not: "",
+            surte_efectos: "",
+            terminos: [],
+            creado_por: 'francisco@abogados.com',
+            fecha_creacion: new Date()
+        }
 
-    // JSON document
-    $scope.acuerdo = {
-        slug: "",
-        actor: "",
-        demandado: "",
-        juzgado: "",
-        expediente: "",
-        juicio: "",
-        publ_boletin: "",
-        tipo_not: "",
-        surte_efectos: "",
-        terminos: [],
-        creado_por: 'francisco@abogados.com',
-        fecha_creacion: new Date()
-    }
+        // Add more textBox to the Acuerdos JSON
+        $scope.addMore = function() {
+            $scope.acuerdo.terminos.push({
+                textBox: ""
+            });
+        }
 
-    // Add more textBox to the Acuerdos JSON
-    $scope.addMore = function() {
-        $scope.acuerdo.terminos.push({
-            textBox: ""
-        });
-    }
+        $scope.popup1 = {
+            opened: false
+        }
 
-    $scope.popup1 = {
-        opened: false
-    }
+        $scope.popup1 = function() {
+            $scope.popup1.opened = true;
+        }
 
-    $scope.popup1 = function() {
-        $scope.popup1.opened = true;
-    }
+        $scope.popup2 = {
+            opened: false
+        };
 
-    $scope.popup2 = {
-        opened: false
-    };
+        $scope.open1 = function() {
+            $scope.popup1.opened = true;
+        }
 
-    $scope.open1 = function() {
-        $scope.popup1.opened = true;
-    }
+        $scope.open2 = function() {
+            $scope.popup2.opened = true;
+        };
 
-    $scope.open2 = function() {
-        $scope.popup2.opened = true;
-    };
+        // Calendar Options
+        $scope.dateOptions = {
+            dateDisabled: disabled,
+            formatYear: 'yy',
+            maxDate: new Date(2020, 5, 22),
+            minDate: new Date(),
+            startingDay: 1
+        };
 
-    // Calendar Options
-    $scope.dateOptions = {
-        dateDisabled: disabled,
-        formatYear: 'yy',
-        maxDate: new Date(2020, 5, 22),
-        minDate: new Date(),
-        startingDay: 1
-    };
+        function disabled(data) {
+            var date = data.date,
+                mode = data.mode;
+            return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+        }
 
-    function disabled(data) {
-        var date = data.date,
-            mode = data.mode;
-        return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
-    }
+        // POST Function to create an Acuerdo
+        $scope.saveAcuerdo = function() {
+            $scope.acuerdo.slug = $scope.acuerdo.expediente + '-' + $filter('date')($scope.acuerdo.publ_boletin, 'ddMMyyyy');
+            ServiceAcuerdos.createAcuerdo($scope.acuerdo)
+                .then(function(doc) {
+                    console.log("Succesfull POST operation: " + doc);
+                    $window.location.href = '/#/acuerdos'
+                }, function(response) {
+                    alert(response);
+                })
+        }
 
-    // POST Function to create an Acuerdo
-    $scope.saveAcuerdo = function() {
-        $scope.acuerdo.slug = $scope.acuerdo.expediente + '-' + $filter('date')($scope.acuerdo.publ_boletin, 'ddMMyyyy');
-        ServiceAcuerdos.createAcuerdo($scope.acuerdo)
-            .then(function(doc) {
-                console.log("Succesfull POST operation: " + doc);
-                $window.location.href = '/#/acuerdos'
-            }, function(response) {
-                alert(response);
+        // File upload
+        $scope.attachment;
+
+        $scope.showProperties = function() {
+            Upload.upload({
+                url: "/apiv1/acuerdos",
+                data: {
+                    file: $scope.attachment,
+                    otherData: Upload.json($scope.acuerdo)
+                }
+            }).then(function(resp) {
+                if (resp.data.error_code === 0) {
+                    console.log("Success");
+                } else {
+                    console.log(resp);
+                }
+            }, function(resp) {
+                console.log("Error: " + resp.status);
             })
-    }
-});
+        }
+    });
