@@ -6,6 +6,38 @@
   </div>
 </div>
 <div class="container">
+  <table st-table="rowCollection" class="table table-striped">
+  	<thead>
+  	<tr>
+      <th>ID</th>
+  		<th>Actor</th>
+  		<th>Demandado</th>
+  		<th>Juzgado</th>
+  		<th>Expediente</th>
+  		<th>Juicio</th>
+      <th>Publicación del Boletín</th>
+      <th>Surte Efectos</th>
+            <th>Tipo de Notificación</th>
+  	</tr>
+  	</thead>
+  	<tbody>
+  	<tr ng-repeat="acuerdo in acuerdos">
+  		<td>{{acuerdo.slug}}</td>
+  		<td>{{acuerdo.actor}}</td>
+  		<td>{{acuerdo.demandado}}</td>
+  		<td>{{acuerdo.juzgado}}</td>
+  		<td>{{acuerdo.expediente}}</td>
+      <td>{{acuerdo.juicio}}</td>
+      <td>{{acuerdo.publ_boletin}}</td>
+      <td>{{acuerdo.surte_efectos}}</td>
+      <td>{{acuerdo.tipo_not}}</td>
+  	</tr>
+  	</tbody>
+  </table>
+</div>
+
+<!--
+<div class="container">
 <uib-accordion close-others="oneAtATime">
   <div uib-accordion-group class="panel-default" heading="{{acuerdo.expediente + acuerdo.juzgado}}" ng-repeat="acuerdo in acuerdos">
     <div class="panel-body">
@@ -25,7 +57,6 @@
     </div>
     </div>
 </uib-accordion>
-  <!--
   </table>
 
           <a ng-repeat="acuerdo in acuerdos" data-toggle="collapse" ng-href="#collapse1" class="list-group-item">{{acuerdo.actor}} </a>
