@@ -1,5 +1,9 @@
 const express = require('express');
-const bodyParser = require('body-parser')
+const multer = require('multer');
+var upload = multer({
+    dest: 'uploads/'
+});
+const bodyParser = require('body-parser');
 const MongoClient = require('mongodb').MongoClient;
 const app = express();
 var db
@@ -54,14 +58,23 @@ app.get('/apiv1/acuerdos/:id', function(req, res) {
 })
 
 // Dar de alta un acuerdo
+/*
 app.post('/apiv1/acuerdos', function(req, res) {
     var acuerdo = req.body;
+
+    console.log(req.headers);
+    console.log(req.file);
+    console.log(req.files);
 
     db.collection('acuerdos').save(acuerdo, function(err, result) {
         if (err) return console.log(err)
         console.log('POST /acuerdos')
         res.status(201).json(result.ops[0]);
     })
+})
+*/
+app.post('/apiv1/acuerdos', upload.any(), function(req, res) {
+    console.log(req.body);
 })
 
 // Generic function handler used by all endpoints
