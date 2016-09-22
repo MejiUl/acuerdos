@@ -41,16 +41,16 @@ app.get('/apiv1/acuerdos', function(req, res) {
 
 // Get a single acuerdo
 app.get('/apiv1/acuerdos/:id', function(req, res) {
-    db.collection('acuerdos').find({
+    db.collection('acuerdos').findOne({
         slug: req.params.id
-    }).toArray(function(err, results) {
+    }, function(err, results) {
         if (err) {
-            handleError(res, "Holi", "Mus", 400);
+            handleError(res, "Holi", "MUSSS", 400);
         } else {
             console.log("GET /acuerdos/" + req.params.id);
-            res.status(200).json(results);
+            res.status(200).json(results)
         }
-    })
+    });
 })
 
 // Dar de alta un acuerdo
