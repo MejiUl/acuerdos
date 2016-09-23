@@ -74,7 +74,14 @@ app.post('/apiv1/acuerdos', function(req, res) {
 })
 */
 app.post('/apiv1/acuerdos', upload.any(), function(req, res) {
-    console.log(req.body);
+    var acuerdo = req.body.otherData;
+    var fileName = req.file;
+
+    db.collection('acuerdos').save(acuerdo, function(err, result) {
+        if (err) return console.log(err)
+        console.log("Succesful POST /acuerdos");
+        res.status(201).json(result.ops[0]);
+    })
 })
 
 // Generic function handler used by all endpoints
