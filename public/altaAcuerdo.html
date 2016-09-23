@@ -61,18 +61,16 @@
         </div>
 
         <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
-                <button class="btn btn-default" ng-click="saveAcuerdo()">Guardar</button>
-            </div>
+            <label for="attachments" class="col-sm-2 control-label">Archivos Adjuntos</label>
+            <div class="col-sm-9">
+            <input type="file" ngf-select ng-model="attachment" name="file" accept="'application/pdf'" required ngf-model-invalid="errorFile">
+           </div>
         </div>
 
         <div class="form-group">
-            <label for="attachments" class="col-sm-2 control-label">attachments</label>
-            <input type="file" ngf-select ng-model="attachment" name="file"
-             accept="image/*" ngf-max-size="2MB" required
-             ngf-model-invalid="errorFile">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button class="btn btn-default" ng-click="saveAcuerdov1()">Guardar</button>
+            </div>
         </div>
-        <button class = "btn btn-info" ng-click="showProperties()">Imprime</buton>
-
-    </form>
+        </form>
 </div>
