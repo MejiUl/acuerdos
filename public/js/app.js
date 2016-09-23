@@ -1,4 +1,4 @@
-angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'pdf'])
+angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'pdf', 'ui.calendar'])
     .config(function($routeProvider) {
         $routeProvider
             .when("/", {
@@ -28,6 +28,15 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'pdf']
                     }
                 }
             })
+            .when("/calendario", {
+                templateUrl: "calendario.html",
+                controller: "calendarioController",
+                resolve: {
+                    terminos: function(ServiceAcuerdos) {
+                        return ServiceAcuerdos.getTerminos();
+                    }
+                }
+            })
             .otherwise({
                 redirectTo: "/"
             })
@@ -53,13 +62,36 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'pdf']
             }
             // POST Acuerdo
         this.createAcuerdo = function(jsonData) {
-            console.log("Inside Service" + jsonData)
             return $http.post('/apiv1/acuerdos', jsonData).
             then(function(response) {
                 return response;
             }, function(err) {
                 alert("No se pudo realizar la petición POST" + err)
             })
+        }
+        this.getTerminos = function() {
+            return $http.get("/apiv1/acuerdos").
+            then(function(response) {
+                var acuerdosArray = response.data;
+                var terminosArray = [];
+
+                for (i = 0; i < acuerdosArray.length; i++) {
+                    var terminosAux = acuerdosArray[i].terminos;
+                    for (j = 0; j < terminosAux.length; j++) {
+                        var aux = {
+                            title: acuerdosArray[i].slug,
+                            start: terminosAux[j].fecha_termino,
+                            allDay: true,
+                            url: "/#/acuerdos/" + acuerdosArray[i].slug
+                        }
+                        terminosArray.push(aux);
+                    }
+                }
+                console.log(terminosArray)
+                return terminosArray;
+            }, function(err) {
+                alert("No se encontró el elemento:" + err);
+            });
         }
     })
     .controller("homeController", function($scope) {
@@ -70,6 +102,28 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'pdf']
     })
     .controller("editAcuerdoController", function($scope, $routeParams, acuerdo) {
         $scope.acuerdo = acuerdo.data;
+    })
+    .controller("calendarioController", function($scope, terminos, uiCalendarConfig) {
+        $scope.terminos = terminos;
+        var date = new Date();
+        var d = date.getDate();
+        var m = date.getMonth();
+        var y = date.getFullYear();
+
+        $scope.eventSources = [$scope.terminos];
+
+        // Calendar Options
+        $scope.uiConfig = {
+            calendar: {
+                height: 450,
+                editable: true,
+                header: {
+                    left: 'title',
+                    center: '',
+                    right: 'today prev,next'
+                }
+            }
+        }
     })
     .controller("altaAcuerdoController", function($scope, ServiceAcuerdos, $filter, $window, Upload) {
         $scope.tipos_not = ["Listado", "Presencial"];
