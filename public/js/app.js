@@ -115,7 +115,7 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'pdf',
         // Calendar Options
         $scope.uiConfig = {
             calendar: {
-                height: 450,
+                height: 600,
                 editable: true,
                 header: {
                     left: 'title',
