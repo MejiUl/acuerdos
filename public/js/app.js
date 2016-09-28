@@ -37,9 +37,37 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'pdf',
                     }
                 }
             })
+            .when("/register", {
+                templateUrl: "register.html",
+                controller: "registerController"
+            })
+            .when("/login", {
+                templateUrl: "login.html",
+                controller: "loginController"
+            })
             .otherwise({
                 redirectTo: "/"
             })
+    })
+    .factory("AuthData", function() {
+        var user = {
+            username: "",
+            token: ""
+        }
+        return {
+            getusername: function() {
+                return user.username;
+            },
+            setUsername: function(username) {
+                user.username = username;
+            },
+            getToken: function() {
+                return user.token;
+            },
+            setToken: function(token) {
+                user.token = token;
+            }
+        }
     })
     .service("ServiceAcuerdos", function($http) {
         // GET ALL acuerdos
@@ -92,6 +120,53 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'pdf',
             }, function(err) {
                 alert("No se encontró el elemento:" + err);
             });
+        }
+        this.saveUser = function(jsonData) {
+            return $http.post("/apiv1/register", jsonData).
+            then(function(response) {
+                return response;
+            }, function(err) {
+                alert("No se pudo dar de alta");
+            })
+        }
+        this.authenticateUser = function(jsonData) {
+            return $http.post("/apiv1/authenticate", jsonData).
+            then(function(response) {
+                return response;
+            }, function(err) {
+                alert("Error en la autenticación");
+            })
+        }
+
+
+    })
+    .controller("loginController", function($scope, $window, ServiceAcuerdos, AuthData) {
+        $scope.user = {};
+
+        $scope.authenticateUser = function() {
+            ServiceAcuerdos.authenticateUser($scope.user).
+            then(function(resp) {
+                //console.log(resp.data.username);
+                AuthData.setUsername(resp.data.username);
+                AuthData.setToken(resp.data.token);
+                $window.location.href = "/#/acuerdos"
+            }, function(err) {
+                console.log("Fail Authenticate");
+            })
+        }
+    })
+    .controller("registerController", function($scope, ServiceAcuerdos, $window) {
+        $scope.user = {};
+
+        $scope.saveUser = function() {
+            ServiceAcuerdos.saveUser($scope.user).
+            then(function(resp) {
+                console.log("SaveUser Success");
+                console.log(resp);
+                $window.location.href = '/#/login'
+            }, function(err) {
+                console.log("SaveUser Fail");
+            })
         }
     })
     .controller("homeController", function($scope) {
