@@ -80,7 +80,6 @@ app.post('/apiv1/authenticate', function(req, res) {
             console.log("ERROR " + err);
         }
         if (results) {
-            console.log(results);
             bcrypt.compare(req.body.password, results.password, function(err, isMatch) {
                     if (err) console.log(err);
                     if (isMatch) {
