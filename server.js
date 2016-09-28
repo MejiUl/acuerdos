@@ -50,7 +50,7 @@ app.post('/apiv1/register', function(req, res) {
         if (err) console.log(err);
         if (results) {
             console.log("Existe el email");
-            res.end();
+            res.status(409).end();
         } else {
             console.log("No existe el email");
             bcrypt.hash(req.body.password, 10, function(err, hash) {
@@ -58,7 +58,8 @@ app.post('/apiv1/register', function(req, res) {
 
                 db.collection('users').save({
                     email: req.body.email,
-                    password: hash
+                    password: hash,
+                    username: req.body.username
                 }, function(err, results) {
                     if (err) console.log(err);
                     return res.status(201).json(results);
@@ -79,8 +80,7 @@ app.post('/apiv1/authenticate', function(req, res) {
             console.log("ERROR " + err);
         }
         if (results) {
-            console.log('Body Passworld: ' + req.body.password);
-            console.log(results.password);
+            console.log(results);
             bcrypt.compare(req.body.password, results.password, function(err, isMatch) {
                     if (err) console.log(err);
                     if (isMatch) {
