@@ -149,9 +149,6 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'pdf',
 
 
     })
-    .controller("navBarController", function($scope, AuthData) {
-        $scope.username = AuthData.getusername();
-    })
     .controller("loginController", function($scope, $window, ServiceAcuerdos, AuthData) {
         $scope.user = {};
 
