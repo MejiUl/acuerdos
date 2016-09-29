@@ -1,9 +1,89 @@
-{{acuerdo.slug}}
-{{acuerdo.actor}}
-{{acuerdo.demandado}}
-{{acuerdo.juzgado}}
-{{acuerdo.expediente}}
-{{acuerdo.juicio}}
-{{acuerdo.publ_boletin | date : "dd/MM/yyyy"}}
-{{acuerdo.surte_efectos | date : "dd/MM/yyyy"}}
-{{acuerdo.tipo_not}}
+<div class="container">
+    <form name="acuerdosForm" class="form-horizontal">
+        <div class="row">
+            <div class="col-sm-8">
+                <h3>Datos del Acuerdo</h>
+                <h6>Redactado por:
+                    <i>{{acuerdo.creado_por}}</i>
+                </h>
+            </div>
+            <div class="col-sm-4">
+                <h3>Comentarios</h>
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <div class="form-group">
+                <label for="actor" class="col-sm-2 control-label">Actor</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" ng-model="acuerdo.actor" placeholder="Actor">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="expediente" class="col-sm-2 control-label">Demandado</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" ng-model="acuerdo.demandado" placeholder="Demandado">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="juzgado" class="col-sm-2 control-label">Juzgado</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" ng-model="acuerdo.juzgado" placeholder="Juzgado">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="expediente" class="col-sm-2 control-label">Expediente</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" ng-model="acuerdo.expediente" placeholder="Expediente">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="juicio" class="col-sm-2 control-label">Juicio</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" ng-model="acuerdo.juicio" placeholder="Juicio">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="publ_boletin" class="col-sm-2 control-label">Publicación del Boletín</label>
+                <div class="col-sm-9">
+                    <input type="date" class="form-control" ng-model="acuerdo.publ_boletin" required/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="juicio" class="col-sm-2 control-label">Tipo de Notificación</label>
+                <div class="col-sm-10">
+                    <select class="form-control" ng-model="acuerdo.tipo_not">
+                        <option ng-repeat="tipo_not in tipos_not" value="{{tipo_not}}">{{tipo_not}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="surte_efectos" class="col-sm-2 control-label">Surte Efectos</label>
+                <div class="col-sm-9">
+                    <input type="date" class="form-control" ng-model="acuerdo.surte_efectos" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="terminos" class="col-sm-2 control-label">Términos</label>
+                <div class="col-sm-9" ng-repeat="termino in acuerdo.terminos">
+                    <textarea class="form-control" maxlength="225" rows="2" ng-model="termino.textBox" placeholder="Acuerdos"></textarea>
+                    <input type="date" class="form-control" ng-model="termino.fecha_termino" required/>
+                </div>
+            </div>
+        </div>
+            <div class="col-sm-4">
+                <div class="col-sm-9" ng-repeat="comentario in acuerdo.comentarios">
+                    <textarea class="form-control" maxlength="225" rows="2" ng-model="comentario.comentario"></textarea>
+                </div>
+                <textarea class="form-control" maxlength="225" rows="2" ng-model="comentario" placeholder="Comentarios"></textarea>
+                <button class="btn btn-info" ng-click="addComment()">Add More</button>
+            </div>"
+            <div class="row">
+                <button class="btn btn-info" ng-click="saveComments()">Guardar</button>
+            </div>
+
+        <div class="row">
+            <button class="btn btn-info" ng-click="aprobar()">Aprobar</button>
+        </div>
+    </form>
+</div>
