@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const mongo = require('mongodb');
 const MongoClient = require('mongodb').MongoClient;
 const app = express();
 
@@ -87,7 +88,6 @@ app.post('/apiv1/register', function(req, res) {
             console.log("No existe el email");
             bcrypt.hash(req.body.password, 10, function(err, hash) {
                 if (err) console.log(err);
-
                 db.collection('users').save({
                     email: req.body.email,
                     password: hash,
@@ -103,7 +103,6 @@ app.post('/apiv1/register', function(req, res) {
 
 
 app.post('/apiv1/authenticate', function(req, res) {
-    console.log(req.body);
     db.collection('users').findOne({
         email: req.body.email
     }, function(err, results) {
@@ -113,50 +112,26 @@ app.post('/apiv1/authenticate', function(req, res) {
         }
         if (results) {
             bcrypt.compare(req.body.password, results.password, function(err, isMatch) {
-                    if (err) console.log(err);
-                    if (isMatch) {
-                        var token = jwt.sign(req.body, 'hotCake', {
-                            expiresIn: 3600 // in seconds
-                        });
-                        console.log("POST / authenticate")
-                        results.token = token;
-                        res.status(200).json(results);
-                    } else {
-                        console.log("Wrong Password")
-                        res.status(403).json(req.body);
-                    }
+                if (err) console.log(err);
+                if (isMatch) {
+                    var token = jwt.sign(req.body, 'hotCake', {
+                        expiresIn: 3600 // in seconds
+                    });
+                    console.log("POST / authenticate")
+                    results.token = token;
+                    res.status(200).json(results);
+                } else {
+                    console.log("Wrong Password")
+                    res.status(403).json(req.body);
+                }
 
-                })
-                /*
-                  console.log(results)
-                  if (req.body.password === results.password) {
-                      var token = jwt.sign(req.body, 'hotCake', {
-                          expiresIn: 3600 // in seconds
-                      });
-                      console.log(token);
-                      console.log("POST / authenticate")
-                      res.status(200).json(results);
-                  } else {
-                      console.log("Wrong Password")
-                      res.status(403).json(req.body);
-                  }
-                  */
+            })
         } else {
             console.log("User NOT FOUND");
             res.status(404).json(req.body);
         }
     })
 })
-
-app.get('/apiv1/nomamar', passport.authenticate('jwt', {
-        session: false
-    }),
-    function(req, res) {
-        console.log(req);
-        console.log(res);
-        res.send("Succsssss");
-    }
-);
 
 // Get the list of all acuerdos
 app.get('/apiv1/acuerdos', function(req, res) {
@@ -172,6 +147,7 @@ app.get('/apiv1/acuerdos', function(req, res) {
 
 // Get a single acuerdo
 app.get('/apiv1/acuerdos/:id', function(req, res) {
+    console.log('ddddddddddddd')
     db.collection('acuerdos').findOne({
         slug: req.params.id
     }, function(err, results) {
@@ -182,6 +158,26 @@ app.get('/apiv1/acuerdos/:id', function(req, res) {
             res.status(200).json(results)
         }
     });
+})
+
+// Update acuerdo
+app.post('/apiv1/acuerdos/:id', function(req, res) {
+    //console.log(req.body);
+    var o_id = new mongo.ObjectID(req.body._id);
+    delete req.body._id;
+    console.log(req.body);
+    db.collection('acuerdos').update({
+        _id: o_id
+    }, req.body, function(err, result) {
+        if (err) {
+            console.log(err);
+            //handleError(result, "Holi", "MUSSS", 400);
+        } else {
+            //console.log(result);
+            console.log("PUT apiv1/acuerdos/" + req.params.id)
+            res.status(201).json(result)
+        }
+    })
 })
 
 // Dar de alta un acuerdo
