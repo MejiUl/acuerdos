@@ -51,7 +51,7 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'pdf',
     })
     .factory("AuthData", function() {
         var user = {
-            username: "",
+            username: "JIL",
             token: ""
         }
         return {
@@ -97,6 +97,15 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'pdf',
                 alert("No se pudo realizar la petición POST" + err)
             })
         }
+        this.editAcuerdo = function(jsonData) {
+            console.log(jsonData);
+            return $http.post('/apiv1/acuerdos/' + jsonData.slug, jsonData).
+            then(function(response) {
+                return response;
+            }, function(err) {
+                alert("No se pudo realizar la petición Post" + err)
+            })
+        }
         this.getTerminos = function() {
             return $http.get("/apiv1/acuerdos").
             then(function(response) {
@@ -140,6 +149,9 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'pdf',
 
 
     })
+    .controller("navBarController", function($scope, AuthData) {
+        $scope.username = AuthData.getusername();
+    })
     .controller("loginController", function($scope, $window, ServiceAcuerdos, AuthData) {
         $scope.user = {};
 
@@ -175,8 +187,54 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'pdf',
     .controller("acuerdosController", function(acuerdos, $scope) {
         $scope.acuerdos = acuerdos.data;
     })
-    .controller("editAcuerdoController", function($scope, $routeParams, acuerdo) {
+    .controller("editAcuerdoController", function($scope, $routeParams, acuerdo, AuthData, ServiceAcuerdos) {
         $scope.acuerdo = acuerdo.data;
+        $scope.comentario = "";
+        // Cast the String Date to a valid JavaScript Date Object
+        $scope.acuerdo.publ_boletin = new Date($scope.acuerdo.publ_boletin)
+        $scope.acuerdo.surte_efectos = new Date($scope.acuerdo.surte_efectos)
+
+        if (typeof $scope.acuerdo.comentarios == 'undefined') {
+            $scope.acuerdo.comentarios = [];
+        }
+
+        for (i = 0; i < $scope.acuerdo.terminos.length; i++) {
+            $scope.acuerdo.terminos[i].fecha_termino = new Date($scope.acuerdo.terminos[i].fecha_termino);
+        };
+
+        $scope.addComment = function() {
+            $scope.acuerdo.comentarios.push({
+                username: AuthData.getusername(),
+                comentario: $scope.comentario,
+                fecha_comentario: new Date()
+            });
+            console.log($scope.acuerdo);
+        }
+
+
+        $scope.saveComments = function() {
+            ServiceAcuerdos.editAcuerdo($scope.acuerdo).
+            then(function(resp) {
+                console.log("Edit Acuerdo");
+                console.log(resp);
+            }, function(err) {
+                console.log(err);
+            })
+        }
+
+        $scope.aprobar = function() {
+            $scope.acuerdo.revisado_por.push({
+                email: AuthData.getusername(),
+                fecha_rev: new Date()
+            });
+            ServiceAcuerdos.editAcuerdo($scope.acuerdo).
+            then(function(resp) {
+                console.log("Edit Acuerdo");
+                console.log(resp);
+            }, function(err) {
+                console.log(err);
+            })
+        }
     })
     .controller("calendarioController", function($scope, terminos, uiCalendarConfig) {
         $scope.terminos = terminos;
@@ -200,7 +258,7 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'pdf',
             }
         }
     })
-    .controller("altaAcuerdoController", function($scope, ServiceAcuerdos, $filter, $window, Upload) {
+    .controller("altaAcuerdoController", function($scope, ServiceAcuerdos, $filter, $window, Upload, AuthData) {
         $scope.tipos_not = ["Listado", "Presencial"];
 
         // JSON document
@@ -215,7 +273,11 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'pdf',
             tipo_not: "",
             surte_efectos: "",
             terminos: [],
-            creado_por: 'francisco@abogados.com',
+            creado_por: AuthData.getusername(),
+            revisado_por: [{
+                email: AuthData.getusername(),
+                fecha_rev: new Date()
+            }],
             fecha_creacion: new Date(),
             attachmentURL: ""
         }
