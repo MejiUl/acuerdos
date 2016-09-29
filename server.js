@@ -10,7 +10,8 @@ const app = express();
 var upload = multer({
     dest: 'uploads/'
 });
-var passport = require('passport');
+var passport = require("passport");
+var passportJWT = require("passport-jwt");
 var db
 
 
@@ -32,7 +33,32 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 // Logging
-//app.use(morgan('dev'));
+app.use(morgan('dev'));
+
+
+//Define Passport Strategy
+var ExtractJwt = passportJWT.ExtractJwt;
+var JwtStrategy = passportJWT.Strategy;
+var opts = {};
+opts.jwtFromRequest = ExtractJwt.fromAuthHeader();
+opts.secretOrKey = 'hotCake';
+
+passport.use(new JwtStrategy(opts, function(jwt_payload, done) {
+    console.log(jwt_payload);
+    db.collection('users').findOne({
+        email: jwt_payload.email
+    }, function(err, user) {
+        if (err) {
+            console.log("MIAU");
+            return done(err, false);
+        }
+        if (user) {
+            done(null, user);
+        } else {
+            done(null, false);
+        }
+    });
+}));
 
 // Use the passport package in our application
 app.use(passport.initialize());
@@ -41,6 +67,12 @@ app.use(passport.initialize());
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/public/index.html')
 })
+
+app.get('/apiv1/dashboard', passport.authenticate('jwt', {
+    session: false
+}), function(req, res) {
+    res.send('It worked! User id is: ' + req.user.email + '.');
+});
 
 // Register new user
 app.post('/apiv1/register', function(req, res) {
@@ -71,7 +103,7 @@ app.post('/apiv1/register', function(req, res) {
 
 
 app.post('/apiv1/authenticate', function(req, res) {
-    //console.log(req);
+    console.log(req.body);
     db.collection('users').findOne({
         email: req.body.email
     }, function(err, results) {
