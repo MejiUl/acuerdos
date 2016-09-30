@@ -9,6 +9,10 @@
             </div>
             <div class="col-sm-4">
                 <h3>Comentarios</h>
+                <button type="button" class="btn btn-xs">
+                    <span class="glyphicon glyphicon-plus" ng-click="addComment()"></span>
+                </button>
+
             </div>
         </div>
         <div class="col-sm-8">
@@ -71,16 +75,36 @@
                 </div>
             </div>
         </div>
-            <div class="col-sm-4">
-                <div class="col-sm-9" ng-repeat="comentario in acuerdo.comentarios">
-                    <textarea class="form-control" maxlength="225" rows="2" ng-model="comentario.comentario"></textarea>
+        <div class="col-sm-4">
+            <div class="col-sm-9" ng-repeat="comentario in acuerdo.comentarios">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <p>
+                            <div class="input-group">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button">{{comentario.username}}</button>
+                                </span>
+                                <textarea class="form-control" maxlength="225" rows="2" ng-model="comentario.comentario"></textarea>
+                            </div>
+                        </p>
+                    </div>
                 </div>
-                <textarea class="form-control" maxlength="225" rows="2" ng-model="comentario" placeholder="Comentarios"></textarea>
-                <button class="btn btn-info" ng-click="addComment()">Add More</button>
-            </div>"
-            <div class="row">
-                <button class="btn btn-info" ng-click="saveComments()">Guardar</button>
             </div>
+            <p>
+                <div class="col-lg-12">
+                    <div class="input-group">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button">{{activeUsername}}</button>
+                        </span>
+                        <textarea class="form-control" maxlength="225" rows="2" ng-model="comentario"></textarea>
+                    </div>
+                </div>
+            </p>
+            <!--<button class="btn btn-info" ng-click="addComment()">Add More</button></button>-->
+        </div>
+        <div class="row">
+            <button class="btn btn-info" ng-click="saveComments()">Guardar</button>
+        </div>
 
         <div class="row">
             <button class="btn btn-info" ng-click="aprobar()">Aprobar</button>
