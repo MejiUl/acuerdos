@@ -187,6 +187,7 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'pdf',
     .controller("editAcuerdoController", function($scope, $routeParams, acuerdo, AuthData, ServiceAcuerdos) {
         $scope.acuerdo = acuerdo.data;
         $scope.comentario = "";
+        $scope.activeUsername = AuthData.getusername();
         // Cast the String Date to a valid JavaScript Date Object
         $scope.acuerdo.publ_boletin = new Date($scope.acuerdo.publ_boletin)
         $scope.acuerdo.surte_efectos = new Date($scope.acuerdo.surte_efectos)
