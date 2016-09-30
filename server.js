@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const mongo = require('mongodb');
+const fs = require('fs');
 const MongoClient = require('mongodb').MongoClient;
 const app = express();
 
@@ -147,7 +148,6 @@ app.get('/apiv1/acuerdos', function(req, res) {
 
 // Get a single acuerdo
 app.get('/apiv1/acuerdos/:id', function(req, res) {
-    console.log('ddddddddddddd')
     db.collection('acuerdos').findOne({
         slug: req.params.id
     }, function(err, results) {
@@ -198,14 +198,30 @@ app.post('/apiv1/acuerdos', function(req, res) {
 */
 app.post('/apiv1/acuerdos', upload.any(), function(req, res) {
     var acuerdo = req.body.otherData;
-    var fileName = req.file;
+    var file = req.files[0];
 
+    acuerdo.filename = file.filename;
+    acuerdo.attachmentURL = file.path;
+
+    //console.log(fileName);
     db.collection('acuerdos').save(acuerdo, function(err, result) {
         if (err) return console.log(err)
         console.log("Succesful POST /acuerdos");
         res.status(201).json(result.ops[0]);
     })
 })
+
+app.get('/download/:id', function(req, res) {
+    //console.log(__dirname);
+    var file = __dirname + '/uploads/' + req.params.id;
+    fs.stat(file, function(err, stat) {
+        if (err == null) {
+            res.download(file); // Set disposition and send it.
+        } else {
+            res.status(404).send();
+        }
+    })
+});
 
 // Generic function handler used by all endpoints
 function handleError(res, reason, message, code) {
