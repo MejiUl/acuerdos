@@ -88,6 +88,15 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'pdf',
                     alert("No se encontró el elemento: " + id);
                 })
             }
+            // Get acuerdo as well as file
+        this.getAcuerdov1 = function(id) {
+                return $http.get("/apiv1/acuerdos/" + id).
+                then(function(response) {
+                    return response;
+                }, function(err) {
+                    alert("No se encontró el elemento: " + id);
+                })
+            }
             // POST Acuerdo
         this.createAcuerdo = function(jsonData) {
             return $http.post('/apiv1/acuerdos', jsonData).
@@ -146,8 +155,6 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'pdf',
                 alert("Error en la autenticación");
             })
         }
-
-
     })
     .controller("loginController", function($scope, $window, ServiceAcuerdos, AuthData) {
         $scope.user = {};
@@ -282,6 +289,10 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'pdf',
 
         // File upload
         $scope.attachment;
+        currentBlob = new Blob([$scope.attachment], {
+            type: 'application/pdf'
+        });
+        $scope.pdfUrl = URL.createObjectURL(currentBlob);
 
         // Add more textBox to the Acuerdos JSON
         $scope.addMore = function() {
