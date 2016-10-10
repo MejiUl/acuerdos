@@ -23,6 +23,7 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, database) {
 
     // Serve static files
     app.use(express.static(__dirname + '/public'));
+    app.use('/bower_components', express.static(__dirname + '/bower_components'));
 
     app.listen(3000, function() {
         console.log('listening on 3000')
