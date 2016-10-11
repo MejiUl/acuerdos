@@ -109,5 +109,11 @@
         <div class="row">
             <button class="btn btn-info" ng-click="aprobar()">Aprobar</button>
         </div>
+
+        <div class="row">
+            <button class="btn btn-info" ng-click="getPDF()">Visualizar PDF</button>
+        </div>
+
+        <object data="{{content}}" type="application/pdf" style="width: 100%; height: 800px;"></object>
     </form>
 </div>
