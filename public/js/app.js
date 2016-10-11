@@ -90,11 +90,21 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'pdf',
             }
             // Get acuerdo as well as file
         this.getAcuerdov1 = function(id) {
-                return $http.get("/apiv1/acuerdos/" + id).
+            return $http.get("/apiv1/acuerdos/" + id).
+            then(function(response) {
+                return response;
+            }, function(err) {
+                alert("No se encontró el elemento: " + id);
+            })
+        }
+        this.getAcuerdoAttachment = function(id) {
+                return $http.get("/apiv1/download/" + id + ".pdf", {
+                    responseType: 'arraybuffer'
+                }).
                 then(function(response) {
                     return response;
                 }, function(err) {
-                    alert("No se encontró el elemento: " + id);
+                    alert("No se pudo descargar el PDF");
                 })
             }
             // POST Acuerdo
@@ -191,13 +201,16 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'pdf',
     .controller("acuerdosController", function(acuerdos, $scope) {
         $scope.acuerdos = acuerdos.data;
     })
-    .controller("editAcuerdoController", function($scope, $routeParams, acuerdo, AuthData, ServiceAcuerdos) {
+    .controller("editAcuerdoController", function($scope, $routeParams, $sce, acuerdo, AuthData, ServiceAcuerdos) {
         $scope.acuerdo = acuerdo.data;
         $scope.comentario = "";
         $scope.activeUsername = AuthData.getusername();
         // Cast the String Date to a valid JavaScript Date Object
         $scope.acuerdo.publ_boletin = new Date($scope.acuerdo.publ_boletin)
         $scope.acuerdo.surte_efectos = new Date($scope.acuerdo.surte_efectos)
+        $scope.pdfAttachment;
+
+        console.log($scope.acuerdo);
 
         if (typeof $scope.acuerdo.comentarios == 'undefined') {
             $scope.acuerdo.comentarios = [];
@@ -240,6 +253,22 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'pdf',
                 console.log(err);
             })
         }
+        $scope.getPDF = function() {
+            ServiceAcuerdos.getAcuerdoAttachment($scope.acuerdo.filename).
+            then(function(resp) {
+                $scope.pdfAttachment = resp.data;
+                currentBlob = new Blob([$scope.pdfAttachment], {
+                    type: 'application/pdf'
+                });
+                $scope.pdfUrl = URL.createObjectURL(currentBlob);
+                $scope.content = $sce.trustAsResourceUrl($scope.pdfUrl);
+                console.log(currentBlob.size);
+                console.log(currentBlob.type);
+                console.log("Se descargo el PDF con éxito");
+            }, function(err) {
+                console.log("No se descargo el PDF con éxito");
+            })
+        }
     })
     .controller("calendarioController", function($scope, terminos, uiCalendarConfig) {
         $scope.terminos = terminos;
@@ -263,7 +292,7 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'pdf',
             }
         }
     })
-    .controller("altaAcuerdoController", function($scope, ServiceAcuerdos, $filter, $window, Upload, AuthData) {
+    .controller("altaAcuerdoController", function($scope, $filter, $sce, ServiceAcuerdos, $window, Upload, AuthData) {
         $scope.tipos_not = ["Listado", "Presencial"];
 
         // JSON document
@@ -293,6 +322,8 @@ angular.module("acuerdosApp", ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'pdf',
             type: 'application/pdf'
         });
         $scope.pdfUrl = URL.createObjectURL(currentBlob);
+
+        //$scope.pdfContent = $sce.trustAsResourceUrl($scope.pdfUrl);
 
         // Add more textBox to the Acuerdos JSON
         $scope.addMore = function() {
