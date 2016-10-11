@@ -212,12 +212,16 @@ app.post('/apiv1/acuerdos', upload.any(), function(req, res) {
     })
 })
 
-app.get('/download/:id', function(req, res) {
+
+app.get('/apiv1/download/:id', function(req, res) {
     //console.log(__dirname);
     var file = __dirname + '/uploads/' + req.params.id;
     fs.stat(file, function(err, stat) {
         if (err == null) {
-            res.download(file); // Set disposition and send it.
+            fs.readFile(file, function(err, data) {
+                res.contentType("application/pdf");
+                res.send(data);
+            })
         } else {
             res.status(404).send();
         }
